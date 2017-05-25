@@ -7,6 +7,17 @@ org.springframework.cloud.contract.spec.Contract.make {
     }
     response {
         status 200
-        body("""[{"pid": 555, "project_name": "project_1"}, {"pid": 888, "project_name": "project_2"}]""")
+        body("""
+            [
+                {
+                    "pid": 555,
+                    "project_name": "project_1"
+                },
+                {
+                    "pid": 888,
+                    "project_name": "project_2"
+                }
+            ]
+        """)
     }
 }

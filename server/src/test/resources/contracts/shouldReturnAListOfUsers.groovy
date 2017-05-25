@@ -7,6 +7,17 @@ org.springframework.cloud.contract.spec.Contract.make {
     }
     response {
         status 200
-        body("""[{"id": 1234, "name": "thename"}, {"id": 4567, "name": "anothername"}]""")
+        body("""
+            [
+                {
+                    "id": 1234,
+                    "name": "thename"
+                },
+                {
+                    "id": 4567,
+                    "name": "anothername"
+                }
+            ]
+        """)
     }
 }
