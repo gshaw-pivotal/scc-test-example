@@ -211,3 +211,43 @@ this tells the stubrunner to use the local maven repo, which library / jar in sa
 ```
 
 to report what library / jar it is running and the port it is running them on.
+
+### Consumer vs Producer ###
+
+In our previous contract specification above, we have used fixed values for the response. However, fixed values are not always useful.
+
+Spring cloud contract testing has the concept of consumer and producer. A consumer is anything that uses the service (eg. makes a request to our service and expects a response). A producer is the service that is being called and in the case of spring cloud contract testing is the service that is being stubbed.
+
+By using these we can introduce variable values into the contract specifications with limitations.
+
+By using consumer(your value here) in the request you allow consumers to send a request with any value that matches the form of the request to the stub-server. However, on the response side consumers will get a concrete value to test against.
+
+You can use producer(your value here) in the response, while in the request a concrete value must be used as you need to send a real request to the service.
+
+See [Spring cloud contract consumer and producer](https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html#_what_is_this_value_consumer_producer) for more information.
+
+The following contract specification uses the idea of a consumer and a producer.
+
+```
+    package contracts
+    
+    import org.springframework.cloud.contract.spec.Contract
+    
+    Contract.make {
+        request {
+            method 'GET'
+            //Consumers can be any value, producers must be a real fixed value on the request side
+            url value(consumer(regex('/users/[0-9]{1,}')), producer('/users/99'))
+        }
+        response {
+            status 200
+            body([
+                //Consumers must be a real fixed value, producers can be any value on the response side
+                id: value(consumer('123'), producer(regex('[0-9]{1,}'))),
+                name: 'a_single_user'
+            ])
+        }
+    }
+```
+
+Thus for the above example, a consumer testing against the stub-server would be able send a request to `/users/{id}` where {id} is any integer number with at least one digit (eg. 123, 3, 77 etc) and expect to get a fixed response (which would contain an id key with the value of 123). For the producer side, the contract test would be executed by sending a request to `/users/99` and the test would expect a response from the service to contain an id key with any integer value of at least one digit, but the actual value of the id key would not matter.
