@@ -5,6 +5,10 @@ Experiments with spring cloud contract testing.
     git clone https://github.com/gshaw-pivotal/scc-test-example.git
 ```
 
+The `run.sh` script will build the service, run all tests (including the spring cloud contract tests), build the stubs, publish said stubs to your local maven and then start the stub-server using the stubs just published.
+
+The endpoints of the service being stubbed will then be available at `http://localhost:6565/{endpoint}`.
+
 ## Repo Structure ##
 
 There are two main modules in this repo.
