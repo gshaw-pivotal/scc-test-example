@@ -1,4 +1,4 @@
-Experiments with spring cloud contract testing.
+Experiments with spring cloud contract testing and using json schema validation.
 
 ## Getting started ##
 ```
@@ -255,3 +255,16 @@ The following contract specification uses the idea of a consumer and a producer.
 ```
 
 Thus for the above example, a consumer testing against the stub-server would be able send a request to `/users/{id}` where {id} is any integer number with at least one digit (eg. 123, 3, 77 etc) and expect to get a fixed response (which would contain an id key with the value of 123). For the producer side, the contract test would be executed by sending a request to `/users/99` and the test would expect a response from the service to contain an id key with any integer value of at least one digit, but the actual value of the id key would not matter.
+
+## Json Schema validation ##
+
+An alternative sometimes used for contract testing is an approach that uses a Json schema to perform validation.
+
+Under this approach (assuming a spring boot application) one or more test classes are created using the `RunWith` and `SpringBootTest` annotations. Tests are written which make requests to the application and the responses returned are validated against a defined Json schema.
+
+Examples of this can be seen in the `test/java/io/pivotal/validation` directory for our server, where there are two test classes, one to test the users endpoints and a second to test the projects endpoints. The Json schema specifications to go with these tests can be found in `main/resources/json` directory.
+
+It should be noted that there are limitations with using this approach to contract test.
+
+1. The Json schema specifications only apply to the reponses from the service, there is no contract agreement to enforce how a consumer should structure / present its request to the service. Obviously if the consumer sends a request that the service can not handle, some kind of error / exception will occur, but this would be discovered after the fact (when the consumer tries to integrate with the service).
+2. There is no stub-server for consumers to test against.

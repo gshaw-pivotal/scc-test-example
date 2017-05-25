@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://localhost:8080/json/GetProjects.json",
+  "title": "Projects",
+  "description": "A list of projects",
+  "type": "array",
+  "items": {
+    "$ref": "GetProject.json"
+  }
+}
