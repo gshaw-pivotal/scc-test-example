@@ -31,6 +31,14 @@ A ContractBase class is required to specify which controllers are to be stubbed 
     }
 ```
 
+What if a controller that is going to be stubbed has parameters in its constructor? The you need to include those parameters here like you would anywhere else. However, no production code needs to be moved to the stub-server. Thus, our UsersController takes a UsersServices and its entry in the above setup would be
+
+```
+    ...new UsersController(new UsersServices())...
+```
+
+Our ProjectsController takes no parameters (has no dependencies) and thus is simply `...new ProjectsController()...`
+
 The contract test specifications need to be located in the test resources, under a subfolder called 'contracts'. These contracts are written using groovy script.
 
 A contract test specification follows the following format:
