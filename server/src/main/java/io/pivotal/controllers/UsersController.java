@@ -15,6 +15,9 @@ public class UsersController {
 
     @RequestMapping(value = "/users/{userid}", method = RequestMethod.GET)
     public String getUser(@PathVariable String userid) {
+        if (userid.equals("1")) {
+            return "{\"error\": \"No user found\"}";
+        }
         return "{\"id\": " + userid + ", \"name\": \"a_single_user\"}";
     }
 }

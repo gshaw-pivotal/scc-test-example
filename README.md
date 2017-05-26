@@ -256,6 +256,65 @@ The following contract specification uses the idea of a consumer and a producer.
 
 Thus for the above example, a consumer testing against the stub-server would be able send a request to `/users/{id}` where {id} is any integer number with at least one digit (eg. 123, 3, 77 etc) and expect to get a fixed response (which would contain an id key with the value of 123). For the producer side, the contract test would be executed by sending a request to `/users/99` and the test would expect a response from the service to contain an id key with any integer value of at least one digit, but the actual value of the id key would not matter.
 
+### One URL, multiple contracts ###
+
+What if we have an endpoint like `/users/{id}` but we want different responses based on the id value passed? An simple example of this case is for an id that is not present in the service (eg. user not found). To make this happen we need at least two contract specifications, one that returns a user's details for any id and a second that returns a 'not found' for a specific id.
+
+This can be done with `priority` in the contract specification. This allows a contract specification to override another. Priority is set with an integer value, with a value of '1' indicating this contract specification has the highest priority.
+
+For this example we have two contract specifications for the `/user/{id}` endpoint like so
+
+```
+    package contracts
+    
+    import org.springframework.cloud.contract.spec.Contract
+    
+    Contract.make {
+        priority 1
+        request {
+            method 'GET'
+            url '/users/1'
+        }
+        response {
+            status 200
+            body(
+                error: 'No user found'
+            )
+        }
+    }
+```
+
+and
+
+```
+    package contracts
+    
+    import org.springframework.cloud.contract.spec.Contract
+    
+    Contract.make {
+        priority 2
+        request {
+            method 'GET'
+            //Consumers can be any value, producers must be a real fixed value on the request side
+            url value(consumer(regex('/users/[0-9]{1,}')), producer('/users/99'))
+        }
+        response {
+            status 200
+            body([
+                //Consumers must be a real fixed value, producers can be any value on the response side
+                id: value(consumer('123'), producer(regex('[0-9]{1,}'))),
+                name: 'a_single_user'
+            ])
+        }
+    }
+```
+
+The first specification (found in `shouldReturnNoUserFound.groovy`) specifies that if a request with an id of 1 is received then the service is to respond with the error message 'No user found'. This specification has a priority of 1.
+
+The second specification (found in `shouldReturnTheUser.groovy`) specifies that if the consumer sends a request with any valid id, then a user is to be returned. This specification has a priority of 2.
+
+Normally, the second contract specification would handle a request to `/user/1` and respond with a user, but because the first contract specification has a higher priority it is used and thus the 'No user found' message is returned.
+
 ## Json Schema validation ##
 
 An alternative sometimes used for contract testing is an approach that uses a Json schema to perform validation.

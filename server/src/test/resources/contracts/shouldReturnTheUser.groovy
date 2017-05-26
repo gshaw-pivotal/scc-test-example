@@ -3,6 +3,7 @@ package contracts
 import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
+    priority 2
     request {
         method 'GET'
         //Consumers can be any value, producers must be a real fixed value on the request side
