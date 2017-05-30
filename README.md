@@ -1,5 +1,7 @@
 Experiments with spring cloud contract testing and using json schema validation.
 
+This repo is the gradle version of [scc-test-example-maven](https://github.com/gshaw-pivotal/scc-test-example-maven) which is built using maven.
+
 A good resource for information about spring cloud contract testing can be found at the [Spring Cloud Contract page](https://cloud.spring.io/spring-cloud-contract/spring-cloud-contract.html).
 
 ## Getting started ##
